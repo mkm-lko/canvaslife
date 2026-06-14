@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas Life | Experience Your Future Before You Choose It</title>
+  <meta name="description" content="Canvas Life is a futuristic career exploration platform where students can interactively simulate different career paths before deciding their future path.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Twinkling stars / Floating clouds background canvas -->
+  <canvas id="sky-canvas"></canvas>
+  <div class="sky-overlay"></div>
+
+  <!-- --- NAVIGATION BAR --- -->
+  <header id="main-header">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="#home" class="logo-wrapper" id="nav-logo-btn">
+          <!-- Shooting star icon SVG -->
+          <svg class="logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="star-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8" />
+                <stop offset="50%" stop-color="#818cf8" />
+                <stop offset="100%" stop-color="#c084fc" />
+              </linearGradient>
+            </defs>
+            <!-- Shooting star trails -->
+            <path d="M2 22 L9 15 M5 22 L11 16 M2 19 L8 13" stroke="url(#star-gradient)" stroke-width="2" stroke-linecap="round" />
+            <!-- Star shape -->
+            <path d="M12 7 L14 10.5 L18 11 L15 13.5 L16 17.5 L12 15.5 L8 17.5 L9 13.5 L6 11 L10 10.5 Z" fill="url(#star-gradient)" />
+            <!-- Extra flare -->
+            <circle cx="19" cy="5" r="1.5" fill="#c084fc" />
+            <circle cx="21" cy="9" r="1" fill="#38bdf8" />
+          </svg>
+          <span class="logo-text">Canvas <span class="logo-text-highlight">Life</span></span>
+        </a>
+      </div>
+      
+      <nav class="nav-links">
+        <a href="#home" class="nav-item active" id="nav-home">Home</a>
+        <a href="#simulation" class="nav-item" id="nav-sim">Career Simulation</a>
+        <a href="#reviews" class="nav-item" id="nav-reviews">Reviews</a>
+        <a href="#stories" class="nav-item" id="nav-stories">Success Stories</a>
+        <a href="#about" class="nav-item" id="nav-about">About Us</a>
+        <a href="#contact" class="nav-item" id="nav-contact">Contact</a>
+        <a href="#faq" class="nav-item" id="nav-faq">FAQ</a>
+      </nav>
+
+      <div class="nav-right">
+        <!-- Light/Dark Mode Switcher -->
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        
+        <!-- User Profile badge -->
+        <div id="user-badge" class="user-profile-badge logged-out">
+          <button id="login-nav-btn" class="btn-login-nav">Sign In</button>
+          <div id="logged-in-profile" class="profile-info-nav" style="display: none;">
+            <div class="profile-avatar" id="profile-avatar-letters">JD</div>
+            <div class="profile-meta">
+              <span class="profile-name-span" id="profile-display-name">Guest</span>
+              <span class="profile-plan-span" id="profile-display-plan">Free</span>
+            </div>
+            <button id="logout-btn" class="btn-logout" title="Sign Out">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </button>
+          </div>
+        </div>
+
+        <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Navigation Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay">
+    <div class="mobile-nav-menu">
+      <div class="mobile-nav-links">
+        <a href="#home" class="mobile-nav-item active" id="mob-nav-home">Home</a>
+        <a href="#simulation" class="mobile-nav-item" id="mob-nav-sim">Career Simulation</a>
+        <a href="#reviews" class="mobile-nav-item" id="mob-nav-reviews">Reviews</a>
+        <a href="#stories" class="mobile-nav-item" id="mob-nav-stories">Success Stories</a>
+        <a href="#about" class="mobile-nav-item" id="mob-nav-about">About Us</a>
+        <a href="#contact" class="mobile-nav-item" id="mob-nav-contact">Contact</a>
+        <a href="#faq" class="mobile-nav-item" id="mob-nav-faq">FAQ</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="main-content">
+
+    <!-- ================= HOME VIEW ================= -->
+    <section id="view-home" class="app-view active">
+      <!-- Floating Icons Background Container -->
+      <div class="floating-icons-container">
+        <div class="floating-icon icon-rocket" data-speed="1.2">🚀</div>
+        <div class="floating-icon icon-stethoscope" data-speed="0.8">🩺</div>
+        <div class="floating-icon icon-laptop" data-speed="1.5">💻</div>
+        <div class="floating-icon icon-teacher" data-speed="0.7">🍎</div>
+        <div class="floating-icon icon-judge" data-speed="1.1">⚖️</div>
+        <div class="floating-icon icon-camera" data-speed="0.9">📷</div>
+      </div>
+
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="container hero-container">
+          <div class="hero-badge">
+            <span class="hero-badge-dot"></span>
+            Experience Your Future Before You Choose It
+          </div>
+          <h1 class="hero-headline">
+            Discover Your Future Through <span class="gradient-text">Interactive Career</span> Simulations
+          </h1>
+          <p class="hero-subheading">
+            Test careers before spending years and resources pursuing them. Experience high-fidelity environments, face real challenges, and align with your true calling.
+          </p>
+          <div class="hero-ctas">
+            <button class="btn btn-primary btn-glow" id="hero-btn-explore">Start Exploring</button>
+            <button class="btn btn-secondary" id="hero-btn-demo">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="margin-right: 6px;"><path d="M8 5v14l11-7z"/></svg>
+              Watch Demo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics Section -->
+      <div class="stats-section">
+        <div class="container stats-container">
+          <div class="stat-card">
+            <div class="stat-number" id="stat-careers" data-target="50">0</div>
+            <div class="stat-label">Career Paths</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-sims" data-target="10000">0</div>
+            <div class="stat-label">Simulations Completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-satisfaction" data-target="95">0</div>
+            <div class="stat-label">Student Satisfaction</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Features Teaser -->
+      <div class="features-teaser">
+        <div class="container">
+          <div class="section-title-wrapper">
+            <h2 class="section-title">Why Canvas Life?</h2>
+            <p class="section-subtitle">Bridge the gap between academic education and practical real-world career expectations.</p>
+          </div>
+          <div class="teaser-grid">
+            <div class="teaser-card">
+              <div class="teaser-icon">🎮</div>
+              <h3>Gamified Simulation</h3>
+              <p>Step directly into high-fidelity environments like mock cockpits, surgery labs, or boardrooms with interactive modules.</p>
+            </div>
+            <div class="teaser-card">
+              <div class="teaser-icon">🧠</div>
+              <h3>Skill-Mapping</h3>
+              <p>Receive detailed breakdown reports analyzing your natural problem-solving speed, teamwork, technical affinity, and focus.</p>
+            </div>
+            <div class="teaser-card">
+              <div class="teaser-icon">🗺️</div>
+              <h3>Roadmap Planning</h3>
+              <p>Receive a clear educational roadmap detailing secondary schools, college degrees, certifications, and entry job levels.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= LOGIN SECTION / CARD ================= -->
+    <section id="view-login" class="app-view">
+      <div class="container centered-container">
+        <div class="login-card glass-card">
+          <div class="login-header">
+            <svg class="login-logo-icon" viewBox="0 0 24 24">
+              <path d="M12 7 L14 10.5 L18 11 L15 13.5 L16 17.5 L12 15.5 L8 17.5 L9 13.5 L6 11 L10 10.5 Z" fill="url(#star-gradient)" />
+            </svg>
+            <h2>Unlock Your Future</h2>
+            <p>Sign up in seconds to start simulating your potential careers</p>
+          </div>
+          
+          <form id="login-form" class="login-form">
+            <div class="form-group">
+              <input type="text" id="login-name" required placeholder=" " autocomplete="name">
+              <label for="login-name">Your Name</label>
+            </div>
+            <div class="form-group">
+              <input type="email" id="login-email" required placeholder=" " autocomplete="email">
+              <label for="login-email">Gmail Address</label>
+              <span class="field-info">Must be a valid @gmail.com address</span>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-full">Continue</button>
+          </form>
+
+          <div class="divider"><span>OR</span></div>
+
+          <button id="google-login-btn" class="btn btn-google btn-full">
+            <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22c-.87-2.6-2.87-4.53-5.83-4.53z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+            </svg>
+            Continue with Gmail
+          </button>
+          
+          <p class="login-footer">
+            By signing up, you agree to our <a href="#terms">Terms</a> and <a href="#privacy">Privacy Policy</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SUBSCRIPTION PLANS VIEW ================= -->
+    <section id="view-plans" class="app-view">
+      <div class="container">
+        <div class="section-title-wrapper">
+          <span class="view-tag">Membership Plans</span>
+          <h2 class="section-title">Select Your Exploration Orbit</h2>
+          <p class="section-subtitle">Choose the perfect plan to unlock standard or advanced simulations, roadmap algorithms, and detailed insights.</p>
+        </div>
+
+        <div class="plans-grid">
+          <!-- Comet Plan -->
+          <div class="plan-card glass-card" id="plan-comet">
+            <div class="plan-header">
+              <span class="plan-type">Plan 1</span>
+              <h3>Comet</h3>
+              <div class="plan-price"><span class="price-val">Free</span></div>
+              <p class="plan-tagline">Dip your toes into future exploration</p>
+            </div>
+            <ul class="plan-benefits">
+              <li><span class="check-icon">✓</span> Access to 3 career previews</li>
+              <li><span class="check-icon">✓</span> Basic career reports</li>
+              <li><span class="check-icon">✓</span> Limited recommendations</li>
+            </ul>
+            <button class="btn btn-secondary plan-select-btn" data-plan="Comet">Select Comet</button>
+          </div>
+
+          <!-- Polaris Plan -->
+          <div class="plan-card glass-card" id="plan-polaris">
+            <div class="plan-header">
+              <span class="plan-type">Plan 2</span>
+              <h3>Polaris</h3>
+              <div class="plan-price"><span class="currency">₹</span><span class="price-val">199</span><span class="duration">/mo</span></div>
+              <p class="plan-tagline">Comprehensive simulation and metrics</p>
+            </div>
+            <ul class="plan-benefits">
+              <li><span class="check-icon">✓</span> Unlimited career simulations</li>
+              <li><span class="check-icon">✓</span> Detailed skill analysis</li>
+              <li><span class="check-icon">✓</span> AI improvement suggestions</li>
+              <li><span class="check-icon">✓</span> Personalized learning roadmap</li>
+              <li><span class="check-icon">✓</span> Career comparison tools</li>
+            </ul>
+            <button class="btn btn-primary plan-select-btn" data-plan="Polaris">Select Polaris</button>
+          </div>
+
+          <!-- Sirius Plan -->
+          <div class="plan-card glass-card popular-plan" id="plan-sirius">
+            <div class="popular-badge">Most Popular</div>
+            <div class="plan-header">
+              <span class="plan-type">Plan 3</span>
+              <h3>Sirius</h3>
+              <div class="plan-price"><span class="currency">₹</span><span class="price-val">499</span><span class="duration">/mo</span></div>
+              <p class="plan-tagline">Ultimate tools for deep future predictions</p>
+            </div>
+            <ul class="plan-benefits">
+              <li><span class="check-icon">✓</span> <strong>Everything in Polaris</strong></li>
+              <li><span class="check-icon">✓</span> Premium career reports</li>
+              <li><span class="check-icon">✓</span> Future lifestyle predictions</li>
+              <li><span class="check-icon">✓</span> Exclusive career insights</li>
+              <li><span class="check-icon">✓</span> Priority expert support</li>
+              <li><span class="check-icon">✓</span> Advanced progress dashboard</li>
+            </ul>
+            <button class="btn btn-primary btn-glow plan-select-btn" data-plan="Sirius">Select Sirius</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CAREER SIMULATION PAGE (GRID) ================= -->
+    <section id="view-simulation" class="app-view">
+      <div class="container">
+        <div class="section-title-wrapper">
+          <span class="view-tag">Career Hub</span>
+          <h2 class="section-title">Explore Career Sectors</h2>
+          <p class="section-subtitle">Choose from our active specialized paths and step into detailed, high-fidelity environments.</p>
+        </div>
+
+        <!-- Career filters and search bar -->
+        <div class="career-search-filters">
+          <div class="search-box-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="career-search-input" placeholder="Search by title, keywords or sector...">
+            <button id="career-search-clear" class="btn-clear-search" style="display: none;">✕</button>
+          </div>
+          
+          <div class="category-filters-container">
+            <button class="filter-chip active" data-sector="all">All Careers</button>
+            <button class="filter-chip" data-sector="space">Space Science</button>
+            <button class="filter-chip" data-sector="medical">Healthcare</button>
+            <button class="filter-chip" data-sector="business">Business</button>
+            <button class="filter-chip" data-sector="aviation">Aviation</button>
+            <button class="filter-chip" data-sector="tech">Technology</button>
+          </div>
+        </div>
+
+        <!-- Career cards grid -->
+        <div class="career-grid" id="career-cards-grid">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CAREER DETAIL PAGE (THEMED PLACEHOLDER) ================= -->
+    <section id="view-career-detail" class="app-view themed-career-view">
+      <!-- Unique background layout containers injected dynamically based on theme -->
+      <div class="themed-background-elements" id="themed-bg-container"></div>
+      
+      <div class="container career-detail-container">
+        <!-- Back Navigation -->
+        <button id="back-to-hub-btn" class="btn-back">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Career Simulation
+        </button>
+
+        <div class="career-detail-grid">
+          <!-- Main Career Panel -->
+          <div class="career-main-panel">
+            <div class="career-hero-meta">
+              <span class="career-category-badge" id="cd-sector">Technology</span>
+              <div class="career-detail-header-flex">
+                <div class="career-detail-header-text">
+                  <div class="career-icon-wrapper" id="cd-icon">🚀</div>
+                  <h2 class="career-detail-title" id="cd-title">Astronaut</h2>
+                  <p class="career-detail-desc" id="cd-description">Command spaceships, conduct interstellar research, and study cosmic objects beyond the atmosphere.</p>
+                </div>
+                <div class="career-detail-image-wrapper">
+                  <img id="cd-image" src="" alt="Career illustration" class="career-detail-image">
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Career Simulation Module -->
+            <div id="active-simulation-container" class="simulation-module-wrapper">
+              <!-- Dynamically populated simulation based on career ID -->
+            </div>
+
+            <!-- Learning Roadmap Section -->
+            <div class="roadmap-section glass-card">
+              <h3>Simulation Path & Learning Roadmap</h3>
+              <div class="roadmap-timeline" id="cd-roadmap">
+                <!-- Timeline milestones injected dynamically -->
+              </div>
+            </div>
+
+            <!-- Challenges Section -->
+            <div class="challenges-section">
+              <h3>Sample Career Challenges</h3>
+              <div class="challenges-grid" id="cd-challenges">
+                <!-- Challenges injected dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Secondary Career Sidebar -->
+          <div class="career-sidebar">
+            <!-- Salary Section -->
+            <div class="sidebar-card glass-card salary-card">
+              <div class="sidebar-card-icon">💰</div>
+              <h4>Future Salary Projections</h4>
+              <div class="salary-range-wrapper">
+                <div class="salary-min" id="cd-salary-min">₹8,00,000</div>
+                <div class="salary-divider">-</div>
+                <div class="salary-max" id="cd-salary-max">₹25,00,000</div>
+              </div>
+              <p class="salary-period">per annum (Approx. industry entry to mid tier)</p>
+              
+              <div class="salary-comparison-bar">
+                <div class="comparison-fill" id="cd-salary-progress" style="width: 70%;"></div>
+              </div>
+              <span class="comparison-note">High potential bracket relative to market average</span>
+            </div>
+
+            <!-- Skills Required Card -->
+            <div class="sidebar-card glass-card skills-card">
+              <h4>Required Skills Profile</h4>
+              <p>Key competencies required to perform optimally in this simulation path.</p>
+              <div class="skills-tag-grid" id="cd-skills">
+                <!-- Injected dynamically -->
+              </div>
+            </div>
+
+            <!-- Simulation Preview Mockups Card -->
+            <div class="sidebar-card glass-card preview-mockups-card">
+              <h4>Telemetry Mockup Preview</h4>
+              <div class="mockup-frame">
+                <!-- Telemetry SVG screen mockup -->
+                <div class="mockup-screen" id="cd-mockup-screen">
+                  <div class="mockup-header-bar">
+                    <span class="mockup-dot red"></span>
+                    <span class="mockup-dot yellow"></span>
+                    <span class="mockup-dot green"></span>
+                    <span class="mockup-title-text">Telemetry.sys</span>
+                  </div>
+                  <div class="mockup-content-body">
+                    <div class="mockup-radar">
+                      <div class="radar-line"></div>
+                      <div class="radar-ping"></div>
+                    </div>
+                    <div class="mockup-metrics">
+                      <div class="m-stat"><span>SYS:</span> <span class="green-text">ONLINE</span></div>
+                      <div class="m-stat"><span>ACCURACY:</span> <span class="cyan-text">98.2%</span></div>
+                      <div class="m-stat"><span>ENERGY:</span> <span class="yellow-text">8400 MJ</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ul class="preview-coming-soon" id="cd-coming-soon">
+                <li><span class="bullet">✦</span> 3D Cockpit Interface controls</li>
+                <li><span class="bullet">✦</span> Real-time spatial tracking simulator</li>
+                <li><span class="bullet">✦</span> Mission Control voice command system</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= REVIEWS VIEW ================= -->
+    <section id="view-reviews" class="app-view">
+      <div class="container">
+        <div class="section-title-wrapper">
+          <span class="view-tag">Testimonials</span>
+          <h2 class="section-title">What Our Pioneers Say</h2>
+          <p class="section-subtitle">Real experiences from students who aligned their paths using Canvas Life career metrics.</p>
+        </div>
+
+        <div class="reviews-split-layout">
+          <!-- Left side aggregate and submit form -->
+          <div class="reviews-sidebar">
+            <div class="aggregate-rating-card glass-card">
+              <h3>4.8</h3>
+              <div class="stars-aggregate">★★★★★</div>
+              <p>Based on 10,000+ simulation responses globally.</p>
+            </div>
+
+            <!-- Submit review card -->
+            <div class="submit-review-card glass-card">
+              <h4>Submit Your Feedback</h4>
+              <form id="add-review-form" class="review-form">
+                <div class="form-group">
+                  <input type="text" id="review-name" required placeholder=" ">
+                  <label for="review-name">Full Name</label>
+                </div>
+                <div class="form-group rating-form-group">
+                  <span class="rating-label">Your Rating:</span>
+                  <div class="stars-selector" id="rating-star-selector">
+                    <span class="star-btn active" data-val="1">★</span>
+                    <span class="star-btn active" data-val="2">★</span>
+                    <span class="star-btn active" data-val="3">★</span>
+                    <span class="star-btn active" data-val="4">★</span>
+                    <span class="star-btn active" data-val="5">★</span>
+                  </div>
+                  <input type="hidden" id="review-rating-value" value="5">
+                </div>
+                <div class="form-group">
+                  <textarea id="review-text" required placeholder=" " rows="4"></textarea>
+                  <label for="review-text">Review Message</label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Post Testimonial</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Right side feedback list -->
+          <div class="reviews-feed" id="testimonials-grid-container">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SUCCESS STORIES VIEW ================= -->
+    <section id="view-stories" class="app-view">
+      <div class="container">
+        <div class="section-title-wrapper">
+          <span class="view-tag">Pioneer Stories</span>
+          <h2 class="section-title">Success Journeys</h2>
+          <p class="section-subtitle">Discover real educational paths of students who chose their career paths after simulating them on our platform.</p>
+        </div>
+
+        <div class="success-stories-grid" id="success-stories-grid">
+          <!-- Story card 1 -->
+          <div class="story-card glass-card">
+            <div class="story-img-container">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400" alt="Neha Sharma photo">
+            </div>
+            <div class="story-content">
+              <span class="story-career-tag">Software & AI Engineer</span>
+              <h3>Neha Sharma</h3>
+              <p class="story-journey">
+                "I was torn between Web Development and Research. The Software & AI Engineering simulation's 'Model Optimizer' challenge tested my focus and analytics. It made me realize I thrive in building systems. I am now working as a Software Engineer at a top firm."
+              </p>
+              <div class="story-footer">
+                <span class="story-path">Path: Sirius Plan User → IIT Bangalore</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Story card 2 -->
+          <div class="story-card glass-card">
+            <div class="story-img-container">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" alt="Kabir Mehta photo">
+            </div>
+            <div class="story-content">
+              <span class="story-career-tag">Astronautics Engineer</span>
+              <h3>Kabir Mehta</h3>
+              <p class="story-journey">
+                "The Space Telemetry deck simulation showed me exactly what Astronautics consists of. I understood the mathematics required and mapped my master's pathway directly. I successfully landed an internship at ISRO last month."
+              </p>
+              <div class="story-footer">
+                <span class="story-path">Path: Polaris Plan User → IIST Trivandrum</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Story card 3 -->
+          <div class="story-card glass-card">
+            <div class="story-img-container">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400" alt="Anya Sen photo">
+            </div>
+            <div class="story-content">
+              <span class="story-career-tag">Aerospace Systems Designer</span>
+              <h3>Anya Sen</h3>
+              <p class="story-journey">
+                "Space physics is a massive commitment. The Astronaut simulation allowed me to face a high-stress orbit telemetry alignment mockup. That simulated experience gave me the confidence that I could handle the pressure before taking the GATE exam."
+              </p>
+              <div class="story-footer">
+                <span class="story-path">Path: Polaris Plan User → IISc Bangalore</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ABOUT US VIEW ================= -->
+    <section id="view-about" class="app-view">
+      <div class="container small-container">
+        <div class="section-title-wrapper">
+          <span class="view-tag">Our Mission</span>
+          <h2 class="section-title">Bridging Theory & Practice</h2>
+          <p class="section-subtitle">We believe career choices shouldn't be based on guesses, peer pressure, or generic internet articles.</p>
+        </div>
+
+        <div class="about-content-wrapper glass-card">
+          <div class="about-grid">
+            <div class="about-text-col">
+              <h3>The Vision</h3>
+              <p>Every year, millions of students choose academic courses and career tracks they end up abandoning or regretting. Canvas Life aims to resolve this career crisis by offering high-fidelity, interactive mock environments where students can try out simulated challenges of being an Astronaut or an Engineer before investing years in education.</p>
+              
+              <h3>Who We Are</h3>
+              <p>Founded by education researchers, gaming developers, and industrial psychologists, Canvas Life acts as an experiential hub that merges skill analytics with standard educational counseling, packaging it in a premium, student-friendly platform.</p>
+            </div>
+            
+            <div class="about-stats-col">
+              <div class="about-stat-item">
+                <div class="a-stat-icon">🎓</div>
+                <div>
+                  <h4>Industrial Accuracy</h4>
+                  <p>Our roadmaps are audited annually by certified career counseling agencies.</p>
+                </div>
+              </div>
+              <div class="about-stat-item">
+                <div class="a-stat-icon">🛡️</div>
+                <div>
+                  <h4>Zero Risk Testing</h4>
+                  <p>Fail, pivot, explore, and learn as many careers as you want without financial or time penalties.</p>
+                </div>
+              </div>
+              <div class="about-stat-item">
+                <div class="a-stat-icon">📊</div>
+                <div>
+                  <h4>Advanced Analytics</h4>
+                  <p>Track cognitive indicators, spatial accuracy, creative lateral thinking, and focus ratings.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CONTACT VIEW ================= -->
+    <section id="view-contact" class="app-view">
+      <div class="container small-container">
+        <div class="section-title-wrapper">
+          <span class="view-tag">Support Desk</span>
+          <h2 class="section-title">Connect with Us</h2>
+          <p class="section-subtitle">Have questions about subscription plans, academic partnerships, or new simulation sectors? Drop us a line.</p>
+        </div>
+
+        <div class="contact-grid">
+          <!-- Contact Info -->
+          <div class="contact-info-card glass-card">
+            <h3>Contact Information</h3>
+            <p class="contact-intro">Our support crew replies within 24 hours.</p>
+            
+            <div class="contact-details">
+              <div class="contact-detail-item">
+                <span class="c-icon">📍</span>
+                <div>
+                  <h4>Campus Hub</h4>
+                  <p>Sector-62, Block C-15, Noida, UP, India</p>
+                </div>
+              </div>
+              <div class="contact-detail-item">
+                <span class="c-icon">✉️</span>
+                <div>
+                  <h4>Support Email</h4>
+                  <p>support@canvaslife.in</p>
+                </div>
+              </div>
+              <div class="contact-detail-item">
+                <span class="c-icon">📞</span>
+                <div>
+                  <h4>Partnerships Hotline</h4>
+                  <p>+91 (120) 456-7890</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="contact-socials-title">Follow our flight path:</div>
+            <div class="contact-socials">
+              <a href="#twitter" class="social-icon" aria-label="Twitter">🐦</a>
+              <a href="#linkedin" class="social-icon" aria-label="LinkedIn">💼</a>
+              <a href="#instagram" class="social-icon" aria-label="Instagram">📸</a>
+            </div>
+          </div>
+
+          <!-- Contact Form -->
+          <div class="contact-form-card glass-card">
+            <form id="contact-support-form" class="contact-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <input type="text" id="contact-name" required placeholder=" ">
+                  <label for="contact-name">First Name</label>
+                </div>
+                <div class="form-group">
+                  <input type="text" id="contact-lastname" required placeholder=" ">
+                  <label for="contact-lastname">Last Name</label>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <input type="email" id="contact-email" required placeholder=" ">
+                <label for="contact-email">Email Address</label>
+              </div>
+
+              <div class="form-group">
+                <select id="contact-subject" required>
+                  <option value="" disabled selected hidden></option>
+                  <option value="plans">Membership & Pricing</option>
+                  <option value="careers">Simulation Sectors</option>
+                  <option value="institutes">School & Institutional Tie-ups</option>
+                  <option value="technical">Technical Support</option>
+                </select>
+                <label for="contact-subject" class="select-label">Select Subject</label>
+              </div>
+
+              <div class="form-group">
+                <textarea id="contact-message" required placeholder=" " rows="4"></textarea>
+                <label for="contact-message">Write Message</label>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-full btn-glow">Send Message</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FAQ VIEW ================= -->
+    <section id="view-faq" class="app-view">
+      <div class="container small-container">
+        <div class="section-title-wrapper">
+          <span class="view-tag">Questions</span>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-subtitle">Got questions? We've compiled quick telemetry guidance for our pioneer explorers.</p>
+        </div>
+
+        <div class="faq-accordion-container">
+          <!-- FAQ 1 -->
+          <div class="faq-accordion-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>What is a Career Simulation on Canvas Life?</span>
+              <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-panel">
+              <p>A simulation is an interactive, gamified mockup of the daily challenges, responsibilities, tools, and decisions that characterize a career path. Instead of just reading articles, you navigate simulated situations (like orbital physics adjustments for Astronauts, or neural model code optimization for Engineers) to check your direct affinity with the role.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="faq-accordion-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Are these simulations actual certified course materials?</span>
+              <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-panel">
+              <p>No, they are high-fidelity educational mockups designed to analyze your personal affinity and test cognitive skills before you choose academic degrees. They do not replace university degrees but help you choose the right ones.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="faq-accordion-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>How long does a single simulation path take?</span>
+              <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-panel">
+              <p>Standard simulations take between 15 to 30 minutes, structured in 3 distinct core milestones. Advanced Sirius simulations include multiple interactive scenarios and take up to 60 minutes.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="faq-accordion-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Can I switch subscription plans after selecting?</span>
+              <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-panel">
+              <p>Yes, you can upgrade, downgrade, or cancel your subscription plan at any time through your local profile settings. Upgrades take effect immediately.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 5 -->
+          <div class="faq-accordion-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Do you partner with schools or career councils?</span>
+              <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-panel">
+              <p>Yes! We offer group institutional memberships for high schools and tutoring academies. Please reach out via our Contact form select 'School & Institutional Tie-ups' subject line for customized institutional dashboards.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- --- TOAST NOTIFICATIONS --- -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- --- Demo Video Modal --- -->
+  <div class="modal-overlay" id="demo-modal">
+    <div class="modal-card demo-modal-card glass-card">
+      <button class="modal-close-btn" id="demo-modal-close">✕</button>
+      <div class="demo-video-wrapper">
+        <!-- Interactive Mock Video Preview -->
+        <div class="mock-video-player">
+          <div class="video-overlay">
+            <div class="play-trigger-icon">▶</div>
+            <h3>Canvas Life Platform Walkthrough</h3>
+            <p>1-minute prototype overview</p>
+          </div>
+          <div class="mock-video-bars-wrapper">
+            <div class="video-bar-left">
+              <div class="v-line"></div>
+              <div class="v-line"></div>
+              <div class="v-line"></div>
+            </div>
+            <div class="video-radar-center">
+              <div class="v-radar"></div>
+              <span>SIMULATOR CORE ACTIVE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- --- FOOTER --- -->
+  <footer id="main-footer">
+    <div class="container footer-container">
+      <div class="footer-grid">
+        <div class="footer-brand-col">
+          <a href="#home" class="logo-wrapper">
+            <svg class="logo-icon" viewBox="0 0 24 24" style="width: 20px; height: 20px;">
+              <path d="M12 7 L14 10.5 L18 11 L15 13.5 L16 17.5 L12 15.5 L8 17.5 L9 13.5 L6 11 L10 10.5 Z" fill="url(#star-gradient)" />
+            </svg>
+            <span class="logo-text">Canvas <span class="logo-text-highlight">Life</span></span>
+          </a>
+          <p class="footer-tagline">"Experience Your Future Before You Choose It"</p>
+          <p class="footer-about-text">
+            A next-generation experiential career modeling simulation network for modern students. Try different paths, check metrics, and plan your flight path.
+          </p>
+        </div>
+
+        <div class="footer-links-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#home" class="foot-link">Home</a></li>
+            <li><a href="#simulation" class="foot-link">Career Simulation</a></li>
+            <li><a href="#reviews" class="foot-link">Reviews</a></li>
+            <li><a href="#stories" class="foot-link">Success Stories</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="#about" class="foot-link">About Us</a></li>
+            <li><a href="#contact" class="foot-link">Contact</a></li>
+            <li><a href="#faq" class="foot-link">FAQ</a></li>
+            <li><a href="#simulation" class="foot-link">Simulation Sectors</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4>Legal & Contact</h4>
+          <ul>
+            <li><a href="#privacy" class="foot-link">Privacy Policy</a></li>
+            <li><a href="#terms" class="foot-link">Terms of Service</a></li>
+            <li><span class="footer-info-item">support@canvaslife.in</span></li>
+            <li><span class="footer-info-item">Noida, Uttar Pradesh, India</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Canvas Life. Designed for Tomorrow's Pioneers. All Rights Reserved.</p>
+        <div class="footer-social-links">
+          <a href="#twitter" class="social-icon-sm" aria-label="Twitter">Twitter</a>
+          <a href="#linkedin" class="social-icon-sm" aria-label="LinkedIn">LinkedIn</a>
+          <a href="#instagram" class="social-icon-sm" aria-label="Instagram">Instagram</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
